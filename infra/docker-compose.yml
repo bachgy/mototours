@@ -1,0 +1,37 @@
+services:
+  mongodb:
+    image: mongo:8
+    container_name: mototours-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: mototours
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ../backend/MotoTours.Api
+      dockerfile: Dockerfile
+    container_name: mototours-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    environment:
+      Mongo__ConnectionString: "mongodb://mongodb:27017"
+      Mongo__Database: "mototours"
+      Mongo__RoutesCollection: "routes"
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: mototours-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

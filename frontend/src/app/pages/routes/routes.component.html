@@ -1,0 +1,83 @@
+<h1>Motoros túraútvonalak</h1>
+
+<p *ngIf="error" style="color:red;">Hiba: {{ error }}</p>
+
+<section style="border:1px solid #ddd; padding:12px; margin-bottom:16px;">
+  <h2 *ngIf="!editingId">Új útvonal</h2>
+  <h2 *ngIf="editingId">Szerkesztés</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div style="display:grid; gap:10px; max-width:600px;">
+      <label>
+        Név*
+        <input type="text" formControlName="name" />
+        <small *ngIf="hasError('name','required')" style="color:red;">Kötelező</small>
+        <small *ngIf="hasError('name','minlength')" style="color:red;">Min 2 karakter</small>
+      </label>
+
+      <label>
+        Kiindulópont*
+        <input type="text" formControlName="startLocation" />
+        <small *ngIf="hasError('startLocation','required')" style="color:red;">Kötelező</small>
+      </label>
+
+      <label>
+        Célpont*
+        <input type="text" formControlName="endLocation" />
+        <small *ngIf="hasError('endLocation','required')" style="color:red;">Kötelező</small>
+      </label>
+
+      <label>
+        Táv (km)*
+        <input type="number" formControlName="distanceKm" step="0.1" />
+        <small *ngIf="hasError('distanceKm','min')" style="color:red;">Min 0.1</small>
+      </label>
+
+      <label>
+        Időtartam (perc)*
+        <input type="number" formControlName="durationMinutes" />
+        <small *ngIf="hasError('durationMinutes','min')" style="color:red;">Min 1</small>
+      </label>
+
+      <label>
+        Nehézség*
+        <select formControlName="difficulty">
+          <option *ngFor="let d of difficulties" [value]="d">{{ d }}</option>
+        </select>
+      </label>
+
+      <label>
+        Jegyzet
+        <textarea formControlName="notes" rows="3"></textarea>
+      </label>
+
+      <div style="display:flex; gap:8px;">
+        <button type="submit">{{ editingId ? 'Mentés' : 'Létrehozás' }}</button>
+        <button type="button" (click)="cancelEdit()" *ngIf="editingId">Mégse</button>
+        <button type="button" (click)="startCreate()" *ngIf="!editingId">Űrlap ürítése</button>
+      </div>
+    </div>
+  </form>
+</section>
+
+<section>
+  <h2>Lista</h2>
+  <button type="button" (click)="load()">Frissítés</button>
+  <p *ngIf="loading">Betöltés...</p>
+
+  <ul *ngIf="!loading">
+    <li *ngFor="let r of routes" style="margin:10px 0;">
+      <strong>{{ r.name }}</strong>
+      — {{ r.startLocation }} → {{ r.endLocation }}
+      — {{ r.distanceKm }} km / {{ r.durationMinutes }} perc
+      — {{ r.difficulty }}
+      <span *ngIf="r.notes"> — “{{ r.notes }}”</span>
+      <div style="display:flex; gap:8px; margin-top:4px;">
+        <button (click)="startEdit(r)">Szerkesztés</button>
+        <button (click)="delete(r.id)">Törlés</button>
+      </div>
+    </li>
+  </ul>
+
+  <p *ngIf="!loading && routes.length === 0">Nincs még útvonal.</p>
+</section>
