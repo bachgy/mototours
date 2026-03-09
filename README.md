@@ -1,5 +1,6 @@
-MotoTours
+**MotoTours
 Projekt leírás
+**
 
 A MotoTours egy egyszerű motoros túraútvonal-nyilvántartó webalkalmazás. A rendszer célja, hogy a felhasználó motoros útvonalakat tudjon létrehozni, listázni, szerkeszteni és törölni.
 
