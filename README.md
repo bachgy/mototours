@@ -1,154 +1,193 @@
-**MotoTours
-Projekt leírás
-**
+# 🏍️ MotoTours
 
-A MotoTours egy egyszerű motoros túraútvonal-nyilvántartó webalkalmazás. A rendszer célja, hogy a felhasználó motoros útvonalakat tudjon létrehozni, listázni, szerkeszteni és törölni.
+Egy egyszerű **motoros túraútvonal nyilvántartó webalkalmazás**, amely lehetővé teszi túraútvonalak létrehozását, listázását, szerkesztését és törlését.
 
-A megoldás full-stack architektúrát használ:
+A projekt célja egy **teljes e2e fejlesztési és telepítési folyamat bemutatása** modern webes technológiák használatával.
 
-Frontend: Angular
+---
 
-Backend: ASP.NET Web API
+# 🚀 Főbb jellemzők
 
-Adatbázis: MongoDB
+A rendszer az alábbi funkciókat biztosítja:
 
-Konténerizálás: Docker, Docker Compose
+- 📝 új túraútvonal létrehozása
+- 📋 meglévő túraútvonalak listázása
+- ✏️ túraútvonal szerkesztése
+- 🗑️ túraútvonal törlése
+- 💾 adatok perzisztens tárolása MongoDB adatbázisban
 
-CI/CD: GitHub Actions + GitHub Container Registry (GHCR)
+A kezelt adatok:
 
-Funkciók
+- útvonal neve
+- kiindulópont
+- célpont
+- távolság (km)
+- időtartam (perc)
+- nehézség (Easy / Medium / Hard)
+- megjegyzés
+- létrehozás ideje
 
-A rendszer az alábbi funkciókat támogatja:
+---
 
-új túraútvonal létrehozása
+# 🏗️ Architektúra
 
-meglévő túraútvonalak listázása
+A rendszer **három fő komponensből** áll:
 
-túraútvonal szerkesztése
+## Frontend
 
-túraútvonal törlése
+- Angular alkalmazás
+- buildelt statikus fájlokat **Nginx** szolgálja ki
+- az `/api` hívások **reverse proxy** segítségével a backendhez kerülnek
 
-adatok perzisztens tárolása MongoDB-ben
+## Backend
 
-A kezelt adatmezők:
+- ASP.NET Web API
+- REST végpontokat biztosít
+- MongoDB adatbázissal kommunikál
 
-név
+## Adatbázis
 
-kiindulópont
+- MongoDB
+- Docker volume biztosítja a perzisztens adattárolást
 
-célpont
+---
 
-távolság (km)
+## Architektúra áttekintés
 
-időtartam (perc)
+```text
+Browser
+   |
+   v
+Frontend (Angular + Nginx)
+   |
+   v
+Backend API (ASP.NET)
+   |
+   v
+MongoDB
+```
 
-nehézség (Easy / Medium / Hard)
+---
 
-megjegyzés
+# 📂 Könyvtárstruktúra
 
-létrehozás ideje
-
-Architektúra
-
-A rendszer három fő komponensből áll:
-
-Frontend konténer
-
-Angular alkalmazás
-
-Nginx szolgálja ki a buildelt statikus állományokat
-
-az /api végpontokat reverse proxy segítségével a backend felé továbbítja
-
-Backend konténer
-
-ASP.NET Web API
-
-REST API végpontokat biztosít a frontend számára
-
-MongoDB-hez csatlakozik
-
-MongoDB konténer
-
-a túraútvonalak adatait tárolja
-
-Docker volume biztosítja a perzisztens adattárolást
-
-Logikai kapcsolat:
-
-Böngésző -> Frontend (Nginx) -> Backend API -> MongoDB
-
-Könyvtárstruktúra
+```text
 mototours/
-  backend/
-    MotoTours.Api/
-  frontend/
-  infra/
-    docker-compose.yml
-    docker-compose.prod.yml
-  .github/
-    workflows/
-      ci.yml
-  README.md
-Lokális futtatás fejlesztői környezetben
-Előfeltételek
+│
+├── backend/
+│   └── MotoTours.Api/
+│
+├── frontend/
+│
+├── infra/
+│   ├── docker-compose.yml
+│   └── docker-compose.prod.yml
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+└── README.md
+```
+
+---
+
+# ⚙️ Lokális futtatás (fejlesztői környezet)
+
+## Előfeltételek
 
 Szükséges szoftverek:
 
-Docker
-
-Docker Compose
-
-Git
+- Docker
+- Docker Compose
+- Git
 
 Fejlesztéshez opcionálisan:
 
-Node.js és Angular CLI
+- Node.js
+- Angular CLI
+- .NET SDK
 
-.NET SDK
+---
 
-Indítás Docker Compose-szal
+## Alkalmazás indítása
 
-A projekt gyökerében vagy az infra mappában futtatható:
-
+```bash
 docker compose -f infra/docker-compose.yml up -d --build
-Elérhetőségek
+```
 
-Frontend: http://<szerver-ip>:8081
+---
 
-Backend Swagger: http://<szerver-ip>:8080/swagger
+## Elérhetőségek
 
-MongoDB: mongodb://<szerver-ip>:27017
+| Service | URL |
+|--------|-----|
+| Frontend | http://localhost:8081 |
+| Backend Swagger | http://localhost:8080/swagger |
+| MongoDB | mongodb://localhost:27017 |
 
-Leállítás
+---
+
+## Leállítás
+
+```bash
 docker compose -f infra/docker-compose.yml down
-Production / deployment futtatás
+```
 
-A production compose fájl már előre buildelt image-eket használ a GitHub Container Registryből.
+---
 
-Indítás:
+# 🚀 Production / Deployment
 
+A production környezet már **előre buildelt Docker image-eket használ** a GitHub Container Registryből.
+
+## Indítás
+
+```bash
 docker compose -f infra/docker-compose.prod.yml up -d
+```
 
-Frissítés új image-ekre:
+## Frissítés új image-ekre
 
+```bash
 docker compose -f infra/docker-compose.prod.yml pull
+
 docker compose -f infra/docker-compose.prod.yml up -d
+```
 
-Leállítás:
+## Leállítás
 
+```bash
 docker compose -f infra/docker-compose.prod.yml down
-Backend API végpontok
-Összes útvonal lekérése
+```
+
+---
+
+# 🔌 Backend API
+
+A backend REST API-n keresztül érhető el.
+
+## Összes útvonal lekérése
+
+```http
 GET /api/routes
-Egy útvonal lekérése azonosító alapján
+```
+
+## Egy útvonal lekérése
+
+```http
 GET /api/routes/{id}
-Új útvonal létrehozása
+```
+
+## Új útvonal létrehozása
+
+```http
 POST /api/routes
 Content-Type: application/json
+```
 
 Példa kérés:
 
+```json
 {
   "name": "Teszt kör",
   "startLocation": "Budapest",
@@ -158,118 +197,139 @@ Példa kérés:
   "difficulty": "Easy",
   "notes": "első mentés"
 }
-Meglévő útvonal módosítása
+```
+
+## Útvonal módosítása
+
+```http
 PUT /api/routes/{id}
-Content-Type: application/json
-Útvonal törlése
+```
+
+## Útvonal törlése
+
+```http
 DELETE /api/routes/{id}
+```
 
 A teljes API dokumentáció Swagger felületen érhető el.
 
-Felhasználói útmutató
-1. Az alkalmazás megnyitása
+---
 
-Nyisd meg a frontend címet a böngészőben:
+# 👤 Felhasználói útmutató
 
+## 1. Az alkalmazás megnyitása
+
+Nyisd meg a frontendet:
+
+```
 http://<szerver-ip>:8081
-2. Új útvonal létrehozása
+```
 
-A bal oldali űrlapon töltsd ki a szükséges mezőket:
+---
 
-név
+## 2. Új útvonal létrehozása
 
-kiindulópont
+Töltsd ki az űrlapot:
 
-célpont
+- név
+- kiindulópont
+- célpont
+- távolság
+- időtartam
+- nehézség
+- opcionális megjegyzés
 
-táv
+Ezután kattints a **Létrehozás** gombra.
 
-időtartam
+---
 
-nehézség
+## 3. Útvonal szerkesztése
 
-opcionális megjegyzés
+A listában válaszd ki az útvonalat, majd kattints a **Szerkesztés** gombra.
 
-Ezután kattints a Létrehozás gombra.
+A módosítás után kattints a **Mentés** gombra.
 
-3. Meglévő útvonal szerkesztése
+---
 
-A listában a kiválasztott útvonalnál kattints a Szerkesztés gombra. Az űrlap kitöltődik a meglévő adatokkal. A módosítás után kattints a Mentés gombra.
+## 4. Útvonal törlése
 
-4. Útvonal törlése
+A listában kattints a **Törlés** gombra.
 
-A listában kattints a Törlés gombra a kívánt elemnél.
+---
 
-5. Lista frissítése
+## 5. Lista frissítése
 
-A Frissítés gombbal újra lekérhető az aktuális lista.
+A **Frissítés** gomb újra lekéri az aktuális adatokat a szerverről.
 
-6. Űrlap ürítése
+---
 
-Az Űrlap ürítése gomb visszaállítja az alapértelmezett űrlapállapotot.
+## 6. Űrlap ürítése
 
-CI/CD működés
+Az **Űrlap ürítése** gomb visszaállítja az alapértelmezett állapotot.
 
-A projekt tartalmaz GitHub Actions workflow-t.
+---
 
-A workflow feladata:
+# 🔄 CI/CD
 
-a repository kódjának checkoutja
+A projekt tartalmaz **GitHub Actions pipeline-t**, amely automatikusan buildeli és publikálja a Docker image-eket.
 
-bejelentkezés a GitHub Container Registrybe
+A pipeline lépései:
 
-backend Docker image buildelése és pusholása
+1. repository checkout
+2. bejelentkezés a GitHub Container Registrybe
+3. backend image build és push
+4. frontend image build és push
 
-frontend Docker image buildelése és pusholása
+Workflow fájl:
 
-A workflow fájl helye:
-
+```
 .github/workflows/ci.yml
-
-Push után a pipeline automatikusan lefut a main branch-en.
+```
 
 Publikált image-ek:
 
+```
 ghcr.io/bachgy/mototours-backend:latest
 
 ghcr.io/bachgy/mototours-frontend:latest
+```
 
-Használt technológiák
+---
 
-Angular
+# 🧰 Használt technológiák
 
-TypeScript
+- Angular
+- TypeScript
+- ASP.NET Web API
+- C#
+- MongoDB
+- Docker
+- Docker Compose
+- GitHub Actions
+- GitHub Container Registry
+- Nginx
 
-ASP.NET Web API
+---
 
-C#
+# 🔮 Továbbfejlesztési lehetőségek
 
-MongoDB
+- keresés és szűrés a listában
+- felhasználókezelés
+- autentikáció
+- modernebb UI
+- seed adatok
+- healthcheck és monitoring
 
-Docker
+---
 
-Docker Compose
+# 📌 Összegzés
 
-GitHub Actions
+A **MotoTours** projekt egy teljes, konténerizált webalkalmazás, amely bemutatja a modern full‑stack fejlesztési folyamatot:
 
-GitHub Container Registry
+- frontend + backend fejlesztés
+- adatbázis integráció
+- Docker alapú futtatás
+- CI pipeline
+- container registry publikálás
 
-Nginx
-
-Továbbfejlesztési lehetőségek
-
-keresés és szűrés a listában
-
-felhasználókezelés és autentikáció
-
-részletesebb validáció
-
-egységesebb, modernebb UI
-
-seed adatok
-
-healthcheck és monitorozás
-
-Összegzés
-
-A MotoTours projekt egy teljes, konténerizált, e2e módon futtatható webalkalmazás, amely lefedi a fejlesztéstől a telepítésig tartó folyamat fő lépéseit. A rendszer alkalmas a követelmény specifikációban megadott feladat teljesítésére, és bemutatja a modern full-stack fejlesztés, konténerizálás és automatizált build/publish folyamatok alapjait.
+A rendszer teljesíti a feladat specifikációban szereplő követelményeket, és egy **fejlesztéstől a telepítésig tartó automatizált workflow-t** demonstrál.
